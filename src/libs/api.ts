@@ -37,3 +37,22 @@ export async function deleteTodo(id: number) {
     .select();
   return { data, error };
 }
+
+export async function completeTodo(id: number) {
+  console.log("🚀 ~ id:", id);
+  const { data, error } = await supabase
+    .from("todos")
+    .update({ completed: true })
+    .eq("id", id)
+    .select();
+  return { data, error };
+}
+
+export async function uncompleteTodo(id: number) {
+  const { data, error } = await supabase
+    .from("todos")
+    .update({ completed: false })
+    .eq("id", id)
+    .select();
+  return { data, error };
+}

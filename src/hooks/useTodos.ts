@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback, ChangeEvent } from "react";
 import { Todo } from "../types/todo";
-import { fetchTodos, createTodo, deleteTodo } from "../libs/api";
+import {
+  fetchTodos,
+  createTodo,
+  deleteTodo,
+  completeTodo,
+  uncompleteTodo,
+} from "../libs/api";
 
 export const useTodos = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -53,13 +59,26 @@ export const useTodos = () => {
   );
 
   // Toggle todo completion status
-  const toggleTodo = useCallback((id: number) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  }, []);
+  const toggleTodo = useCallback(
+    (id: number) => {
+      const todo = todos.find((todo) => todo.id === id);
+      if (!todo) return;
+
+      if (todo) {
+        if (todo.completed) {
+          uncompleteTodo(id);
+        } else {
+          completeTodo(id);
+        }
+        setTodos((prevTodos) =>
+          prevTodos.map((todo) =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
+          )
+        );
+      }
+    },
+    [todos]
+  );
 
   // Delete todo by ID
   const deleteTodoItem = useCallback(async (id: number) => {
