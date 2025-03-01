@@ -6,6 +6,8 @@ A modern TODO application built using **React**, **TypeScript**, and a suite of 
 
 [TodoApp Demo](https://todo-app-smoky-tau-48.vercel.app)
 
+![TodoApp Demo](/public/todo-app.webp)
+
 ## Tech Stack
 
 - **Framework**: React
