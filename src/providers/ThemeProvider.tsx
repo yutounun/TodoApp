@@ -1,14 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
+import ThemeContext from "../contexts/ThemeContext";
 type Theme = "light" | "dark";
-
-const ThemeContext = createContext<{
-  theme: Theme;
-  toggleTheme: () => void;
-}>({
-  theme: "light",
-  toggleTheme: () => {},
-});
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -34,13 +26,4 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </ThemeContext.Provider>
   );
-};
-
-// Custom hook to access theme context
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
 };
