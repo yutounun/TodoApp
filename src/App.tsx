@@ -1,5 +1,7 @@
 import Header from "./components/Header";
-import TodoContainer from "./components/TodoContainer";
+import React, { Suspense } from "react";
+
+const TodoContainer = React.lazy(() => import("./components/TodoContainer"));
 
 function App() {
   return (
@@ -8,7 +10,10 @@ function App() {
 
       <main className="container mx-auto py-8">
         <h1 className="text-center text-neutral-700 mb-8">Todo App</h1>
-        <TodoContainer />
+
+        <Suspense fallback={<div>Loading...</div>}>
+          <TodoContainer />
+        </Suspense>
       </main>
     </div>
   );
