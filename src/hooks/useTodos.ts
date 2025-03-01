@@ -29,7 +29,7 @@ export const useTodos = () => {
         throw new Error(message);
       }
     },
-    retry: false, // エラー時の再試行を無効化
+    retry: false, // disable retry on error
   });
 
   // Add new todo with cache update

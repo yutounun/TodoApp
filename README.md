@@ -1,54 +1,80 @@
-# React + TypeScript + Vite
+# TodoApp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern TODO application built using **React**, **TypeScript**, and a suite of cutting-edge frontend technologies. This project incorporates best practices such as **API caching**, **code splitting**, **CI/CD**, and **unit testing** to ensure it is **readable**, **reusable**, **maintainable**, and **scalable**.
 
-Currently, two official plugins are available:
+## Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[TodoApp Demo](https://todo-app-smoky-tau-48.vercel.app)
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Framework**: React
+- **State Management**: Redux, Context API
+- **Type Checking**: TypeScript
+- **Styling**: TailwindCSS
+- **Testing**: Jest, Testing Library, Vitest
+- **Backend**: Supabase
+- **Data Fetching**: TanStack Query
+- **UI Components**: shadcn-ui
+- **Build Tool**: Vite
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Best Practices
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### API Caching
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **TanStack Query** is used for API data fetching and caching, ensuring efficient data management and reducing unnecessary API calls. This makes the application **scalable** and **maintainable**.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+### Code Splitting
+
+- Leveraging **Vite's dynamic import** feature, the application is split into smaller chunks, improving initial load times and making the codebase more **readable** and **reusable**.
+
+### CI/CD
+
+- **GitHub Actions** is used to set up a CI/CD pipeline, ensuring automated testing and deployment. This enhances the **maintainability** and reliability of the project.
+
+### Unit Testing
+
+- **Jest** and **Testing Library** are used for unit testing components, ensuring the code is **reliable** and **maintainable**.
+
+## Setup Instructions
+
+1. Clone the repository.
+
+   ```bash
+   git clone https://github.com/yutounun/TodoApp.git
+   cd TodoApp
+
+   ```
+
+2. Install dependencies.
+
+   ```bash
+
+   npm install
+
+   ```
+
+3. Set up environment variables. Create a .env file and add your Supabase URL and key.
+
+   ```bash
+
+   VITE_SUPABASE_URL=your-supabase-url
+   VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+   ```
+
+4. Start the development server.
+
+   ```bash
+
+   npm run dev
+
+   ```
+
+5. Run tests.
+
+   ```bash
+
+   npm test
+
+   ```
