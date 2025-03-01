@@ -10,7 +10,7 @@ const todoContainerStyle = "w-full max-w-2xl mx-auto p-6";
 const TodoContainer = memo(() => {
   const {
     todos,
-    loading,
+    isLoading,
     error,
     inputText,
     handleSubmit,
@@ -36,12 +36,12 @@ const TodoContainer = memo(() => {
     [todos, toggleTodo, deleteTodoItem]
   );
 
-  if (loading) {
+  if (isLoading) {
     return <LoadingTodoContainer />;
   }
 
   if (error) {
-    return <div className="text-red-500 text-center">{error}</div>;
+    return <div className="text-red-500 text-center">{error.message}</div>;
   }
 
   return (

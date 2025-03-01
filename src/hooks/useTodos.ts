@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, ChangeEvent } from "react";
+import { useState, useCallback, ChangeEvent } from "react";
 import { Todo } from "../types/todo";
 import {
   fetchTodos,
@@ -7,47 +7,52 @@ import {
   completeTodo,
   uncompleteTodo,
 } from "../libs/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useTodos = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const queryClient = useQueryClient();
   const [inputText, setInputText] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch todos from supabase
-  useEffect(() => {
-    async function getTodos() {
+  // Fetch todos with caching
+  const {
+    data: { data: todos = [] } = { data: [] },
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["todos"],
+    queryFn: async () => {
       try {
-        const { data } = await fetchTodos();
-        if (data) {
-          setTodos(data);
-        }
-      } catch (e) {
-        console.error(e);
-        setError(e instanceof Error ? e.message : "Failed to fetch");
-      } finally {
-        setLoading(false);
+        return await fetchTodos();
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Failed to fetch";
+        throw new Error(message);
       }
-    }
-    getTodos();
-  }, []);
+    },
+    retry: false, // エラー時の再試行を無効化
+  });
 
-  // Add new todo
+  // Add new todo with cache update
+  const { mutate: addTodo } = useMutation({
+    mutationFn: createTodo,
+    onSuccess: (response) => {
+      queryClient.setQueryData(
+        ["todos"],
+        (old: { data: Todo[] } | undefined) => ({
+          data: [...(old?.data || []), response.data],
+        })
+      );
+    },
+  });
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
       if (!inputText.trim()) return;
-
-      const { data, error } = await createTodo(inputText);
-      if (error) {
-        console.error(error);
-      }
-      if (data) {
-        setTodos((prevTodos) => [...prevTodos, data]);
-      }
+      addTodo(inputText);
       setInputText("");
     },
-    [inputText]
+    [inputText, addTodo]
   );
 
   // Memoize the input change handler
@@ -70,29 +75,40 @@ export const useTodos = () => {
         } else {
           completeTodo(id);
         }
-        setTodos((prevTodos) =>
-          prevTodos.map((todo) =>
-            todo.id === id ? { ...todo, completed: !todo.completed } : todo
-          )
+        queryClient.setQueryData(
+          ["todos"],
+          (old: { data: Todo[] } | undefined) => ({
+            data: (old?.data || []).map((todo) =>
+              todo.id === id ? { ...todo, completed: !todo.completed } : todo
+            ),
+          })
         );
       }
     },
-    [todos]
+    [todos, queryClient]
   );
 
   // Delete todo by ID
-  const deleteTodoItem = useCallback(async (id: number) => {
-    const { error } = await deleteTodo(id);
-    if (error) {
-      console.error(error);
-      return;
-    }
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-  }, []);
+  const deleteTodoItem = useCallback(
+    async (id: number) => {
+      const { error } = await deleteTodo(id);
+      if (error) {
+        console.error(error);
+        return;
+      }
+      queryClient.setQueryData(
+        ["todos"],
+        (old: { data: Todo[] } | undefined) => ({
+          data: (old?.data || []).filter((todo) => todo.id !== id),
+        })
+      );
+    },
+    [queryClient]
+  );
 
   return {
     todos,
-    loading,
+    isLoading,
     error,
     inputText,
     handleSubmit,

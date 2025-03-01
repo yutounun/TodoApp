@@ -1,8 +1,9 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useTodos } from "../useTodos";
 import * as api from "../../libs/api";
 import { Mock } from "vitest";
+import { renderHookWithClient } from "../../test/utils";
 
 vi.mock("../../libs/api", () => ({
   fetchTodos: vi.fn(),
@@ -27,12 +28,12 @@ describe("useTodos", () => {
   });
 
   it("fetches todos on mount", async () => {
-    const { result } = renderHook(() => useTodos());
+    const { result } = renderHookWithClient(() => useTodos());
 
-    expect(result.current.loading).toBe(true);
+    expect(result.current.isLoading).toBe(true);
     await waitFor(() => {
       expect(result.current.todos).toEqual(mockTodos);
-      expect(result.current.loading).toBe(false);
+      expect(result.current.isLoading).toBe(false);
     });
   });
 
@@ -40,11 +41,12 @@ describe("useTodos", () => {
     const error = new Error("Failed to fetch");
     (api.fetchTodos as Mock).mockRejectedValue(error);
 
-    const { result } = renderHook(() => useTodos());
+    const { result } = renderHookWithClient(() => useTodos());
 
     await waitFor(() => {
-      expect(result.current.error).toBe("Failed to fetch");
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error instanceof Error).toBe(true);
+      expect(result.current.error?.message).toBe("Failed to fetch");
+      expect(result.current.isLoading).toBe(false);
     });
   });
 
@@ -55,9 +57,17 @@ describe("useTodos", () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useTodos());
+    (api.fetchTodos as Mock).mockResolvedValue({
+      data: mockTodos,
+      error: null,
+    });
 
-    // Set input text using handleInputChange
+    const { result } = renderHookWithClient(() => useTodos());
+
+    await waitFor(() => {
+      expect(result.current.todos).toEqual(mockTodos);
+    });
+
     act(() => {
       result.current.handleInputChange({
         target: { value: "New Todo" },
@@ -70,6 +80,8 @@ describe("useTodos", () => {
     });
 
     expect(api.createTodo).toHaveBeenCalledWith("New Todo");
-    expect(result.current.todos).toContain(newTodo);
+    await waitFor(() => {
+      expect(result.current.todos).toContainEqual(newTodo);
+    });
   });
 });

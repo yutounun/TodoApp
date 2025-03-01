@@ -15,7 +15,7 @@ describe("TodoContainer", () => {
 
   const mockUseTodos = {
     todos: mockTodos,
-    loading: false,
+    isLoading: false,
     error: null,
     inputText: "",
     handleSubmit: vi.fn(),
@@ -38,7 +38,7 @@ describe("TodoContainer", () => {
   it("shows loading state", () => {
     vi.spyOn(hooks, "useTodos").mockImplementation(() => ({
       ...mockUseTodos,
-      loading: true,
+      isLoading: true,
     }));
 
     render(<TodoContainer />);
@@ -46,10 +46,10 @@ describe("TodoContainer", () => {
   });
 
   it("shows error state", () => {
-    const errorMessage = "Failed to load todos";
+    const errorMessage = "Failed to fetch";
     vi.spyOn(hooks, "useTodos").mockImplementation(() => ({
       ...mockUseTodos,
-      error: errorMessage,
+      error: new Error(errorMessage),
     }));
 
     render(<TodoContainer />);
