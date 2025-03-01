@@ -4,6 +4,7 @@ import { useTodos } from "../useTodos";
 import * as api from "../../libs/api";
 import { Mock } from "vitest";
 import { renderHookWithClient } from "../../test/utils";
+import { queryClient } from "../../test/setup";
 
 vi.mock("../../libs/api", () => ({
   fetchTodos: vi.fn(),
@@ -21,6 +22,7 @@ describe("useTodos", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    queryClient.clear();
     (api.fetchTodos as Mock).mockResolvedValue({
       data: mockTodos,
       error: null,

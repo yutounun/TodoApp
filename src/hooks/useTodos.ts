@@ -36,6 +36,7 @@ export const useTodos = () => {
   const { mutate: addTodo } = useMutation({
     mutationFn: createTodo,
     onSuccess: (response) => {
+      // only update cache if response is successful
       queryClient.setQueryData(
         ["todos"],
         (old: { data: Todo[] } | undefined) => ({
@@ -48,6 +49,7 @@ export const useTodos = () => {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
+      // if input is empty, don't add todo
       if (!inputText.trim()) return;
       addTodo(inputText);
       setInputText("");
@@ -75,6 +77,7 @@ export const useTodos = () => {
         } else {
           completeTodo(id);
         }
+        // update todo in cache
         queryClient.setQueryData(
           ["todos"],
           (old: { data: Todo[] } | undefined) => ({

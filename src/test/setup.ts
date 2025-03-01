@@ -1,14 +1,29 @@
 import "@testing-library/jest-dom";
-import { expect, afterEach } from "vitest";
+import { expect, afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
 import * as matchers from "@testing-library/jest-dom/matchers";
 import { QueryClient } from "@tanstack/react-query";
 
-// Vitestのexpectにjest-domのmatchersを追加
+// add jest-dom matchers to Vitest's expect
 expect.extend(matchers);
 
 afterEach(() => {
   cleanup();
+  queryClient.clear(); // clear cache
 });
 
-export const queryClient = new QueryClient();
+// setup for test
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      staleTime: Infinity, // keep data fresh
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    },
+  },
+});
+
+// setup for global fetch mock
+vi.stubGlobal("fetch", vi.fn());
