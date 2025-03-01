@@ -47,7 +47,11 @@ const TodoContainer = memo(() => {
   return (
     <div className={todoContainerStyle}>
       {/* Form for adding new todo */}
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
+      <form
+        onSubmit={handleSubmit}
+        className="flex gap-2 mb-6"
+        data-testid="todo-form"
+      >
         <Input
           type="text"
           value={inputText}

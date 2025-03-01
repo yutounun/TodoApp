@@ -2,7 +2,10 @@ import { Skeleton } from "./common/skeleton";
 
 export function LoadingTodoContainer() {
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
+    <div
+      className="w-full max-w-2xl mx-auto p-6"
+      data-testid="loading-container"
+    >
       {/* Loading state for add todo form */}
       <div className="flex gap-2 mb-6">
         <Skeleton className="flex-1 h-10 rounded-md" />

@@ -24,7 +24,7 @@ export const useTodos = () => {
         }
       } catch (e) {
         console.error(e);
-        setError(e instanceof Error ? e.message : "Failed to fetch todos");
+        setError(e instanceof Error ? e.message : "Failed to fetch");
       } finally {
         setLoading(false);
       }
