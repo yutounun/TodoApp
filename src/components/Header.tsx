@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { NAV_ITEMS } from "../libs/const";
 import { Sun, Moon } from "lucide-react";
-import { ThemeProvider } from "../providers/ThemeProvider";
+import ThemeContext from "../contexts/ThemeContext";
 
 const Header = () => {
-  const { theme, toggleTheme } = useContext(ThemeProvider);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
     <div className="flex items-center justify-between bg-primary dark:bg-neutral-500 w-full h-16 px-16">
