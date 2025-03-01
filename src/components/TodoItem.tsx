@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import Button from "./common/Button";
 import { Todo } from "../types/todo";
 import { TODO_ACTIONS } from "../libs/const";
@@ -8,12 +9,18 @@ interface TodoItemProps {
   onDelete: (id: number) => void;
 }
 
-const todoItemClass =
-  "flex items-center justify-between p-4 bg-white rounded-md shadow-sm";
+const TodoItem = memo(({ todo, onToggleComplete, onDelete }: TodoItemProps) => {
+  // Memoize button handlers to prevent unnecessary re-renders
+  const handleToggle = useCallback(() => {
+    onToggleComplete(todo.id);
+  }, [todo.id, onToggleComplete]);
 
-const TodoItem = ({ todo, onToggleComplete, onDelete }: TodoItemProps) => {
+  const handleDelete = useCallback(() => {
+    onDelete(todo.id);
+  }, [todo.id, onDelete]);
+
   return (
-    <li className={todoItemClass}>
+    <li className="flex items-center justify-between p-4 bg-card rounded-md shadow-sm">
       {/* Todo text with strike-through when completed */}
       <span
         className={`${
@@ -25,19 +32,15 @@ const TodoItem = ({ todo, onToggleComplete, onDelete }: TodoItemProps) => {
 
       {/* Action buttons for todo item */}
       <div className="flex gap-2">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => onToggleComplete(todo.id)}
-        >
+        <Button variant="secondary" size="sm" onClick={handleToggle}>
           {todo.completed ? TODO_ACTIONS.UNDO : TODO_ACTIONS.COMPLETE}
         </Button>
-        <Button variant="danger" size="sm" onClick={() => onDelete(todo.id)}>
+        <Button variant="danger" size="sm" onClick={handleDelete}>
           {TODO_ACTIONS.DELETE}
         </Button>
       </div>
     </li>
   );
-};
+});
 
 export default TodoItem;

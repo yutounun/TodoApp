@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, ChangeEvent } from "react";
 import { Todo } from "../types/todo";
 import { STORAGE_KEY } from "../libs/const";
 
@@ -16,45 +16,52 @@ export const useTodos = () => {
   }, [todos]);
 
   // Add new todo
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addTodo(inputText);
-    setInputText("");
-  };
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!inputText.trim()) return;
 
-  // Add new todo with unique ID and default completed status
-  const addTodo = (text: string) => {
-    if (!text.trim()) return;
+      setTodos((prevTodos) => [
+        ...prevTodos,
+        {
+          id: Date.now(),
+          text: inputText,
+          completed: false,
+        },
+      ]);
+      setInputText("");
+    },
+    [inputText]
+  );
 
-    const newTodo: Todo = {
-      id: Date.now(), // Use timestamp as unique ID
-      text: text,
-      completed: false,
-    };
-
-    setTodos([...todos, newTodo]);
-  };
+  // Memoize the input change handler
+  const handleInputChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setInputText(e.target.value);
+    },
+    [setInputText]
+  );
 
   // Toggle todo completion status
-  const toggleTodo = (id: number) => {
-    setTodos(
-      todos.map((todo) =>
+  const toggleTodo = useCallback((id: number) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
-  };
+  }, []);
 
   // Delete todo by ID
-  const deleteTodo = (id: number) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
-  };
+  const deleteTodo = useCallback((id: number) => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  }, []);
 
   return {
     todos,
     inputText,
-    setInputText,
     handleSubmit,
     toggleTodo,
     deleteTodo,
+    handleInputChange,
   };
 };
