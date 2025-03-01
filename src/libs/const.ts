@@ -6,3 +6,10 @@ export const TODO_ACTIONS = {
   UNDO: "Undo",
   DELETE: "Delete",
 } as const;
+
+export const NAV_ITEMS = {
+  HOME: {
+    label: "Home",
+    href: "/",
+  },
+};

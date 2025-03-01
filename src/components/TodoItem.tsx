@@ -14,12 +14,16 @@ const todoItemClass =
 const TodoItem = ({ todo, onToggleComplete, onDelete }: TodoItemProps) => {
   return (
     <li className={todoItemClass}>
-      {/* Todo text */}
-      <span className={todo.completed ? "line-through text-neutral-400" : ""}>
+      {/* Todo text with strike-through when completed */}
+      <span
+        className={`${
+          todo.completed ? "line-through text-neutral-400" : ""
+        } dark:text-neutral-800`}
+      >
         {todo.text}
       </span>
 
-      {/* Todo actions */}
+      {/* Action buttons for todo item */}
       <div className="flex gap-2">
         <Button
           variant="secondary"

@@ -8,6 +8,7 @@ h1 {
 
 @layer base {
   :root {
+    /* Light theme colors */
     /* Primary */
     --primary: 238 94% 73%;
     --primary-foreground: 0 0% 100%;
@@ -51,8 +52,8 @@ h1 {
   }
 
   .dark {
-    /* Primary */
-    --primary: 240 30% 25%;
+    /* Dark theme colors - Optimized for dark backgrounds */
+    --primary: 240 30% 45%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary */
@@ -92,9 +93,11 @@ h1 {
 }
 
 @layer base {
+  /* Apply border color globally */
   * {
     @apply border-border;
   }
+  /* Set default background and text colors */
   body {
     @apply bg-background text-foreground;
   }
