@@ -27,7 +27,7 @@ const TodoItem = memo(({ todo, onToggleComplete, onDelete }: TodoItemProps) => {
           todo.completed ? "line-through text-neutral-400" : ""
         } dark:text-neutral-800`}
       >
-        {todo.text}
+        {todo.label}
       </span>
 
       {/* Action buttons for todo item */}

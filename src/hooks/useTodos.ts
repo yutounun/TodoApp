@@ -1,34 +1,44 @@
 import { useState, useEffect, useCallback, ChangeEvent } from "react";
 import { Todo } from "../types/todo";
-import { STORAGE_KEY } from "../libs/const";
+import { fetchTodos, createTodo, deleteTodo } from "../libs/api";
 
 export const useTodos = () => {
-  // Initialize todos from localStorage or empty array
-  const [todos, setTodos] = useState<Todo[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [inputText, setInputText] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Save todos to localStorage whenever they change
+  // Fetch todos from supabase
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-  }, [todos]);
+    async function getTodos() {
+      try {
+        const { data } = await fetchTodos();
+        if (data) {
+          setTodos(data);
+        }
+      } catch (e) {
+        console.error(e);
+        setError(e instanceof Error ? e.message : "Failed to fetch todos");
+      } finally {
+        setLoading(false);
+      }
+    }
+    getTodos();
+  }, []);
 
   // Add new todo
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
       if (!inputText.trim()) return;
 
-      setTodos((prevTodos) => [
-        ...prevTodos,
-        {
-          id: Date.now(),
-          text: inputText,
-          completed: false,
-        },
-      ]);
+      const { data, error } = await createTodo(inputText);
+      if (error) {
+        console.error(error);
+      }
+      if (data) {
+        setTodos((prevTodos) => [...prevTodos, data]);
+      }
       setInputText("");
     },
     [inputText]
@@ -52,16 +62,23 @@ export const useTodos = () => {
   }, []);
 
   // Delete todo by ID
-  const deleteTodo = useCallback((id: number) => {
+  const deleteTodoItem = useCallback(async (id: number) => {
+    const { error } = await deleteTodo(id);
+    if (error) {
+      console.error(error);
+      return;
+    }
     setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
   }, []);
 
   return {
     todos,
+    loading,
+    error,
     inputText,
     handleSubmit,
     toggleTodo,
-    deleteTodo,
+    deleteTodoItem,
     handleInputChange,
   };
 };

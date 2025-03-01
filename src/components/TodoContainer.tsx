@@ -4,18 +4,22 @@ import Input from "./common/Input";
 import TodoItem from "./TodoItem";
 import { useTodos } from "../hooks/useTodos";
 import { TODO_ACTIONS } from "../libs/const";
+import { LoadingTodoContainer } from "./LoadingTodoContainer";
 
+const todoContainerStyle = "w-full max-w-2xl mx-auto p-6";
 const TodoContainer = memo(() => {
   const {
     todos,
+    loading,
+    error,
     inputText,
     handleSubmit,
     toggleTodo,
-    deleteTodo,
+    deleteTodoItem,
     handleInputChange,
   } = useTodos();
 
-  // Memoize the todo list if needed
+  // Memoize the todo list
   const todoList = useMemo(
     () => (
       <ul className="space-y-2">
@@ -24,16 +28,24 @@ const TodoContainer = memo(() => {
             key={todo.id}
             todo={todo}
             onToggleComplete={toggleTodo}
-            onDelete={deleteTodo}
+            onDelete={deleteTodoItem}
           />
         ))}
       </ul>
     ),
-    [todos, toggleTodo, deleteTodo]
+    [todos, toggleTodo, deleteTodoItem]
   );
 
+  if (loading) {
+    return <LoadingTodoContainer />;
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center">{error}</div>;
+  }
+
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
+    <div className={todoContainerStyle}>
       {/* Form for adding new todo */}
       <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
         <Input
