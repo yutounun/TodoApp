@@ -2,9 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import React, { Suspense } from "react";
 import { LoadingTodoContainer } from "./components/LoadingTodoContainer";
-import Counter from "./components/Counter";
+import { LoadingCounter } from "./components/LoadingCounter";
 
 const TodoContainer = React.lazy(() => import("./components/TodoContainer"));
+const Counter = React.lazy(() => import("./components/Counter"));
 
 function App() {
   return (
@@ -12,12 +13,24 @@ function App() {
       <div className="min-h-screen bg-neutral-100">
         <Header />
         <main className="container mx-auto py-8">
-          <Suspense fallback={<LoadingTodoContainer />}>
-            <Routes>
-              <Route path="/todo" element={<TodoContainer />} />
-              <Route path="/counter" element={<Counter />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route
+              path="/todo"
+              element={
+                <Suspense fallback={<LoadingTodoContainer />}>
+                  <TodoContainer />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/counter"
+              element={
+                <Suspense fallback={<LoadingCounter />}>
+                  <Counter />
+                </Suspense>
+              }
+            />
+          </Routes>
         </main>
       </div>
     </Router>
